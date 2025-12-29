@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surprise for Sis!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;700&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            font-family: 'Quicksand', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 340px;
+            z-index: 10;
+        }
+
+        h1 { font-family: 'Fredoka One', cursive; color: #ff6b81; font-size: 1.6rem; margin-top: 0; }
+        p { color: #555; line-height: 1.4; font-size: 1.1rem; }
+
+        .main-gif {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 15px;
+        }
+
+        .btn-group { display: flex; justify-content: center; gap: 15px; margin-top: 15px; }
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-family: 'Quicksand', sans-serif;
+        }
+        .btn-good, .btn-next { background: #ff6b81; color: white; box-shadow: 0 4px 10px rgba(255, 107, 129, 0.3); }
+        .btn-bad { background: #eee; color: #555; position: relative; }
+
+        .page { display: none; animation: slideIn 0.5s ease-out; }
+        .active { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- MUSIC PLAYER --- */
+        .music-player { display: flex; flex-direction: column; align-items: center; }
+        
+        .album-art {
+            width: 220px;
+            height: 220px;
+            border-radius: 15px; 
+            background-size: cover;
+            background-position: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            /* KAWAII PICTURE ADDED BELOW */
+            background-image: url('https://as1.ftcdn.net/jpg/04/64/41/28/1000_F_464412821_O3SJov81WBB3O1AKqUQoNCc02KBwGp9A.webp'); 
+        }
+
+        .progress-area { width: 100%; margin: 15px 0; }
+        input[type="range"] { 
+            width: 100%; 
+            accent-color: #ff6b81; 
+            cursor: pointer; 
+            z-index: 50;
+            position: relative;
+        }
+        
+        .play-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #ff6b81;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Hearts and Stars background - pointer-events: none so they don't block the seeker bar */
+        #hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .heart { position: absolute; color: #ff6b81; animation: float 4s linear infinite; bottom: -50px; font-size: 20px; }
+        @keyframes float { 0% { bottom: -50px; opacity: 1; transform: translateX(0); } 100% { bottom: 100vh; opacity: 0; transform: translateX(20px); } }
+    </style>
+</head>
+<body>
+
+    <div id="hearts"></div>
+
+    <div class="container">
+        <div id="page1" class="page active">
+            <img class="main-gif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eDVxdDNqZ3RreHpxeG85eXo3Z3RreHpxeG85eXo3Z3RreHpxeG85eXo3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/vFKqnCdLPNOKc/giphy.gif">
+            <h1>How are you, Sis?</h1>
+            <div class="btn-group">
+                <button class="btn-good" onclick="handleGood()">Good</button>
+                <button class="btn-bad" id="btn-bad" onmouseover="teleport()" onclick="teleport()">Bad</button>
+            </div>
+        </div>
+
+        <div id="page2" class="page">
+            <img class="main-gif" src="https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUydWZ6MDl1bDFvNXgxaGJwbmVrZ2ZucWR0MTFtZTRjZWh0eXY0OWhsZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/UVk5yzljef0kGiayL1/giphy.gif">
+            <h1>Yay! Glad to hear!</h1>
+            <p>You deserve to have a beautiful day, Sis! ❤️</p>
+            <button class="btn-next" onclick="nextPage('page3')">Next ✨</button>
+        </div>
+
+        <div id="page3" class="page">
+            <img class="main-gif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3JqM3JqM3JqM3JqM3JqM3JqM3JqM3JqM3JqM3JqM3JqM3Jq/3oz8xAFtqoOUUrsh7W/giphy.gif">
+            <h1>You're The Best!</h1>
+            <p>Thanks for being such an amazing sister! 🌟</p>
+            <button class="btn-next" onclick="nextPage('page4')">Keep Going 😊</button>
+        </div>
+
+        <div id="page4" class="page">
+            <img class="main-gif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHp1eDVxdDNqZ3RreHpxeG85eXo3Z3RreHpxeG85eXo3Z3RreHpxeG85eXo3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/UkfUod3TFW66J2BWKK/giphy.gif">
+            <h1>Stay Happy!</h1>
+            <p>Don't ever stop being you! 💖</p>
+            <button class="btn-next" onclick="nextPage('page5')">Wait, more? 👉</button>
+        </div>
+
+        <div id="page5" class="page">
+            <img class="main-gif" src="https://media2.giphy.com/media/v1.Y2lkPTZjMDliOTUycWRiMjd0ZG8yZ2p4ZjBtaXNpMWRmeGJrMW8xNW91ZHdkbXcwYWI1MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/KztT2c4u8mYYUiMKdJ/giphy.gif">
+            <h1>A Big Hug!</h1>
+            <p>Virtual hugs, Sis! 🫂</p>
+            <button class="btn-next" onclick="nextPage('page6')">Almost there...</button>
+        </div>
+
+        <div id="page6" class="page">
+            <img class="main-gif" src="https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyc3ppa2d0eWQxN3lsbHVvZzN2NWJzbXJoM3JzM3RsNWV0OW1rZXo1byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/YoSRLcSdmdV29YPsF2/giphy.gif">
+            <h1>Warrior!</h1>
+            <p>Go Sis! 🚀 You Will Made It! You Are The Real Warrior!
+            </p>
+            <button class="btn-next" onclick="showMusic()">Finally... 🎵</button>
+        </div>
+
+        <div id="page7" class="page">
+            <div class="music-player">
+                <div class="album-art" id="art"></div>
+                <div class="info">
+                    <h2 style="margin:0; font-size: 1.2rem;">Gilehriyaan</h2>
+                    <p style="margin:5px 0; color: #ff6b81;">Im always for you 🎧</p>
+                </div>
+                <div class="progress-area">
+                    <input type="range" id="prog" value="0" max="100">
+                </div>
+                <div class="play-btn" onclick="toggleMusic()">
+                    <i class="fas fa-play" id="icon"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <audio id="song" src="https://pagalfree.com/dwload/128-Gilehriyaan%20-%20Dangal%20128%20Kbps.mp3"></audio>
+
+    <script>
+        function nextPage(id) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function teleport() {
+            const b = document.getElementById('btn-bad');
+            b.style.position = 'fixed';
+            b.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            b.style.top = Math.random() * (window.innerHeight - 50) + 'px';
+        }
+
+        function handleGood() {
+            nextPage('page2');
+            setInterval(() => {
+                const h = document.createElement('div');
+                h.classList.add('heart');
+                h.innerHTML = ['❤️', '💖', '✨', '🌸', '🌟'][Math.floor(Math.random()*5)];
+                h.style.left = Math.random() * 100 + 'vw';
+                document.getElementById('hearts').appendChild(h);
+                setTimeout(() => h.remove(), 4000);
+            }, 300);
+        }
+
+        function showMusic() { nextPage('page7'); }
+
+        const song = document.getElementById('song');
+        const icon = document.getElementById('icon');
+        const prog = document.getElementById('prog');
+        let dragging = false;
+
+        function toggleMusic() {
+            if (song.paused) {
+                song.play();
+                icon.classList.replace('fa-play', 'fa-pause');
+            } else {
+                song.pause();
+                icon.classList.replace('fa-pause', 'fa-play');
+            }
+        }
+
+        song.ontimeupdate = () => {
+            if (!dragging) {
+                prog.value = (song.currentTime / song.duration) * 100;
+            }
+        };
+
+        // FIXED BAR LOGIC
+        prog.onmousedown = () => { dragging = true; };
+        prog.ontouchstart = () => { dragging = true; };
+
+        prog.oninput = () => {
+            // Update visually while dragging
+        };
+
+        prog.onchange = () => {
+            song.currentTime = (prog.value / 100) * song.duration;
+            dragging = false;
+        };
+        
+        prog.ontouchend = () => {
+            song.currentTime = (prog.value / 100) * song.duration;
+            dragging = false;
+        };
+    </script>
+</body>
+</html>
